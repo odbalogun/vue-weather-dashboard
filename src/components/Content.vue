@@ -5,21 +5,29 @@
       <li v-for="child in childComponents" v-bind:key="child">{{ child }}</li>
     </ul>
     {{ weather_data }}
+    <temp-var-chart :tempVar="tempVar"></temp-var-chart>
+    <today-highlights :highlights="highlights"></today-highlights>
   </div>
 </template>
 
 <script>
+import TempVarChart from './TempVarChart.vue'
+import Highlights from './Highlights.vue'
+
 export default {
   data () {
     return {
-      childComponents: ['TempVarChart.vue', 'Highlights.vue']
+      childComponents: ['TempVarChart.vue', 'Highlights.vue'],
+      tempVar: this.weather_data.temperature,
+      highlights: this.weather_data.highlights
     }
   },
   methods: {
 
   },
-  computed: {
-
+  components: {
+    'temp-var-chart': TempVarChart,
+    'today-highlights': Highlights
   },
   props: ['weather_data']
 }
