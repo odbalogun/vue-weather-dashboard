@@ -1,10 +1,5 @@
 <template>
-  <div id="pagecontent">
-    <p>This child components of Content.vue are:</p>
-    <ul>
-      <li v-for="child in childComponents" v-bind:key="child">{{ child }}</li>
-    </ul>
-    {{ weather_data }}
+  <div style="position: relative">
     <temp-var-chart :tempVar="tempVar"></temp-var-chart>
     <today-highlights :highlights="highlights"></today-highlights>
   </div>
@@ -15,27 +10,10 @@ import TempVarChart from './TempVarChart.vue'
 import Highlights from './Highlights.vue'
 
 export default {
-  data () {
-    return {
-      childComponents: ['TempVarChart.vue', 'Highlights.vue'],
-      tempVar: this.weather_data.temperature,
-      highlights: this.weather_data.highlights
-    }
-  },
-  methods: {
-
-  },
   components: {
     'temp-var-chart': TempVarChart,
     'today-highlights': Highlights
   },
-  props: ['weather_data']
+  props: ['highlights', 'tempVar']
 }
 </script>
-
-<style>
-#pagecontent {
-    border: 1px solid black;
-    padding: 2px;
-}
-</style>
