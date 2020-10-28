@@ -15,7 +15,6 @@ PowerCharts(FusionCharts)
 Widgets(FusionCharts)
 FusionTheme(FusionCharts)
 
-
 Vue.config.productionTip = false
 
 // register the component for project wide use
