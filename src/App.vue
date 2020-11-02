@@ -61,6 +61,7 @@
   </div>
 </template>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-lCjpg1xbw-nsCc11Si8Ldg2LKYizqI4&libraries=places" async defer></script>
 <script>
 import Content from './components/Content.vue'
 
@@ -219,6 +220,30 @@ export default {
       }
       this.makeInputEmpty()
       this.makeTempVarTodayEmpty()
+    },
+    // function to retrieve location coordinates from Google api
+    getCoordinates: function () {
+      this.locationEntered()
+      var loc = this.location
+      var coords
+      var geocoder = new google.maps.Geocoder()
+      return new Promise(function (resolve, reject) {
+        geocoder.geocode({ address: loc }, function (results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            this.lat = results[0].geometry.location.lat()
+            this.long = results[0].geometry.location.lng()
+            this.full_location = results[0].formatted_address
+            coords = {
+              lat: this.lat,
+              long: this.long,
+              full_location: this.full_location
+            }
+            resolve(coords)
+          } else {
+            alert("Oops! Couldn't get data for the location")
+          }
+        })
+      })
     }
   }
 }
