@@ -191,6 +191,34 @@ export default {
         }
       }
       return windDirection
+    },
+    // action oriented methods
+    makeInputEmpty: function () {
+      this.$refs.input.value = ''
+    },
+    makeTempVarTodayEmpty: function () {
+      this.tempVar.tempToday = []
+    },
+    detectEnterKeyPress: function () {
+      var input = this.$refs.input
+      input.addEventListener('keyup', function (event) {
+        event.preventDefault()
+        var enterKeyCode = 13
+
+        if (event.keyCode === enterKeyCode) {
+          this.setHitEnterKeyTrue()
+        }
+      })
+    },
+    locationEntered: function () {
+      var input = this.$refs.input
+      if (input.value === '') {
+        this.location = 'Lagos'
+      } else {
+        this.location = this.convertToTitleCase(input.value)
+      }
+      this.makeInputEmpty()
+      this.makeTempVarTodayEmpty()
     }
   }
 }
