@@ -244,6 +244,46 @@ export default {
           }
         })
       })
+    },
+    /* The coordinates that Google Maps Geocoder API returns are way too accurate for our requirements. We need to bring it into shape before passing the coordinates on to the weather API. Although this is a data processing method in its own right, we can’t help mentioning it right now, because the data acquisition method for the weather API has dependency on the output of this method. s*/
+    setFormatCoordinates: async function () {
+      var coordinates = await this.getCoordinates()
+      this.lat = coordinates.lat
+      this.long = coordinates.long
+      this.currentWeather.full_location = coordinates.full_location
+      // Remember to beautify lat for N/S
+      if (coordinates.lat > 0) {
+        this.currentWeather.formatted_lat = (Math.round(coordinates.lat * 10000) / 10000).toString() + '°N'
+      } else if (coordinates.lat < 0) {
+        this.currentWeather.formatted_lat = (-1 * (Math.round(coordinates.lat * 10000) / 10000)).toString() + '°S'
+      } else {
+        this.currentWeather.formatted_lat = (Math.round(coordinates.lat * 10000) / 10000).toString()
+      }
+      // Remember to beautify long for N/S
+      if (coordinates.long > 0) {
+        this.currentWeather.formatted_long = (Math.round(coordinates.long * 10000) / 10000).toString() + '°E'
+      } else if (coordinates.long < 0) {
+        this.currentWeather.formatted_long = (-1 * (Math.round(coordinates.long * 10000) / 10000)).toString() + '°W'
+      } else {
+        this.currentWeather.formatted_long = (Math.round(coordinates.long * 10000) / 10000).toString()
+      }
+    },
+    /* This method dynamically creates the the correct weather API query URL, based on the formatted latitude and longitude. The complete URL is then fed to the method querying for weather data. Notice that the base URL used in this method (without the coordinates) points towards a FusionCharts server — we must redirect our GET request to the weather API through a server to avoid the CORS error.
+    */
+    fixWeatherApi: async function () {
+      await this.setFormatCoordinates()
+      var weatherApi = 'https://csm.fusioncharts.com/files/assets/wb/wb-data.php?src=darksky&lat=' + this.lat + '&long=' + this.long
+      this.completeWeatherApi = weatherApi
+    },
+    fetchWeatherData: async function () {
+      await this.fixWeatherApi()
+      var axios = require('axios') // for handling weather api promise
+      var weatherApiResponse = await axios.get(this.completeWeatherApi)
+      if (weatherApiResponse.status === 200) {
+       this.rawWeatherData = weatherApiResponse.data
+      } else {
+       alert('Hmm... Seems like our weather experts are busy!')
+      }
     }
   }
 }
