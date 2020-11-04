@@ -426,9 +426,9 @@ export default {
       this.getSetHourlyTempInfoToday()
     },
   },
-  mounted: async function() {
-    this.location = "Lagos";
-    await this.organizeAllDetails();    
+  mounted: async function () {
+    this.location = "Lagos"
+    await this.organizeAllDetails()
   }
 }
 </script>
