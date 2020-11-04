@@ -409,6 +409,10 @@ export default {
       this.organizeTodayHighlights()
       this.getSetHourlyTempInfoToday()
     },
+  },
+  mounted: async function() {
+    this.location = "Lagos";
+    await this.organizeAllDetails();    
   }
 }
 </script>
