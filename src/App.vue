@@ -370,6 +370,17 @@ export default {
       var uvIndex = this.rawWeatherData.currently.uvIndex
       this.highlights.uvIndex = uvIndex
     },
+    getSetVisibility: function () {
+      var visibilityInMiles = this.rawWeatherData.currently.visibility
+      this.highlights.visibility = this.mileToKilometer(visibilityInMiles)
+    },
+    getSetWindStatus: function () {
+      var windSpeedInMiles = this.rawWeatherData.currently.windSpeed
+      this.highlights.windStatus.windSpeed = this.mileToKilometer(windSpeedInMiles)
+      var absoluteWindDir = this.rawWeatherData.currently.windBearing
+      this.highlights.windStatus.windDirection = absoluteWindDir
+      this.highlights.windStatus.derivedWindDirection = this.deriveWindDir(absoluteWindDir)
+    },
   }
 }
 </script>
