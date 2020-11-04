@@ -313,7 +313,63 @@ export default {
     },
     getTodayDetails: function () {
       return this.rawWeatherData.daily.data[0]
-    }
+    },
+    getSetTodayTempHighLowWithTime: function() {
+      var timezone = this.getTimezone()
+      var todayDetails = this.getTodayDetails()
+      this.currentWeather.todayHighLow.todayTempHigh = this.fahToCel(todayDetails.temperatureMax)
+      this.currentWeather.todayHighLow.todayTempHighTime = this.unixToHuman(timezone, todayDetails.temperatureMaxTime).onlyTime
+      this.currentWeather.todayHighLow.todayTempLow = this.fahToCel(todayDetails.temperatureMin)
+      this.currentWeather.todayHighLow.todayTempLowTime = this.unixToHuman(timezone, todayDetails.temperatureMinTime).onlyTime
+    },
+    getHourlyInfoToday: function () {
+      return this.rawWeatherData.hourly.data
+    },
+    getSetHourlyTempInfoToday: function () {
+      var unixTime = this.rawWeatherData.currently.time
+      var timezone = this.getTimezone()
+      var todayMonthDate = this.unixToHuman(timezone, unixTime).onlyMonthDate
+      var hourlyData = this.getHourlyInfoToday()
+      for (var i = 0; i < hourlyData.length; i++) {
+        var hourlyTimeAllTypes = this.unixToHuman(timezone, hourlyData[i].time)
+        var hourlyOnlyTime = hourlyTimeAllTypes.onlyTime
+        var hourlyMonthDate = hourlyTimeAllTypes.onlyMonthDate
+        if (todayMonthDate === hourlyMonthDate) {
+          var hourlyObject = { hour: '', temp: '' }
+          hourlyObject.hour = hourlyOnlyTime
+          hourlyObject.temp = this.fahToCel(hourlyData[i].temperature).toString()
+          this.tempVar.tempToday.push(hourlyObject)
+        }
+      }
+      /*
+      To cover the edge case where the local time is between 10 — 12 PM,
+      and therefore there are only two elements in the array
+      this.tempVar.tempToday. We need to add the points for minimum temperature
+      and maximum temperature so that the chart gets generated with atleast four points.
+      */
+      if (this.tempVar.tempToday.length <= 2) {
+        var minTempObject = {
+          hour: this.currentWeather.todayHighLow.todayTempHighTime,
+          temp: this.currentWeather.todayHighLow.todayTempHigh
+        }
+        var maxTempObject = {
+          hour: this.currentWeather.todayHighLow.todayTempLowTime,
+          temp: this.currentWeather.todayHighLow.todayTempLow
+        }
+        /*
+        Typically, lowest temp are at dawn,
+        highest temp is around mid day.
+        Thus we can safely arrange like min, max, temp after 10 PM.
+        */
+        // array.unshift() adds stuff at the beginning of the array.
+        // the order will be: min, max, 10 PM, 11 PM.
+        this.tempVar.tempToday.unshift(maxTempObject, minTempObject)
+      }
+    },
+    getSetUVIndex: function () {
+      var uvIndex = this.rawWeatherData.currently.uvIndex
+      this.highlights.uvIndex = uvIndex
+    },
   }
 }
 </script>
