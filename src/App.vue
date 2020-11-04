@@ -381,6 +381,34 @@ export default {
       this.highlights.windStatus.windDirection = absoluteWindDir
       this.highlights.windStatus.derivedWindDirection = this.deriveWindDir(absoluteWindDir)
     },
+
+    organizeCurrentWeatherInfo: function () {
+      /*
+      Coordinates and location is covered (get & set) in:
+      — this.getCoordinates()
+      — this.setFormatCoordinates()
+      There are lots of async-await involved there.
+      So it's better to keep them there.
+      */
+      this.getSetCurrentTime()
+      this.getSetCurrentTemp()
+      this.getSetTodayTempHighLowWithTime()
+      this.getSetSummary()
+      this.getSetPossibility()
+    },
+    organizeTodayHighlights: function () {
+      // top level for highlights
+      this.getSetUVIndex()
+      this.getSetVisibility()
+      this.getSetWindStatus()
+    },
+    organizeAllDetails: async function () {
+      // top level organization
+      await this.fetchWeatherData()
+      this.organizeCurrentWeatherInfo()
+      this.organizeTodayHighlights()
+      this.getSetHourlyTempInfoToday()
+    },
   }
 }
 </script>
