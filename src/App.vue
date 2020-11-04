@@ -284,6 +284,35 @@ export default {
       } else {
        alert('Hmm... Seems like our weather experts are busy!')
       }
+    },
+    getTimezone: function () {
+      return this.rawWeatherData.timezone
+    },
+    getSetCurrentTime: function () {
+      var currentTime = this.rawWeatherData.currently.time
+      var timezone = this.getTimezone()
+      this.currentWeather.time = this.unixToHuman(timezone, currentTime).fullTime
+    },
+    getSetSummary: function () {
+      var currentSummary = this.convertToTitleCase(this.rawWeatherData.currently.summary)
+      if (currentSummary.includes(' And')) {
+        currentSummary = currentSummary.replace(' And', ',')
+      }
+      this.currentWeather.summary = currentSummary
+    },
+    getSetPossibility: function () {
+      var possible = this.formatPossibility(this.rawWeatherData.daily.icon)
+      if (possible.includes(' And')) {
+        possible = possible.replace(' And', ',')
+      }
+      this.currentWeather.possibility = possible
+    },
+    getSetCurrentTemp: function () {
+      var currentTemp = this.rawWeatherData.currently.temperature
+      this.currentWeather.temp = this.fahToCel(currentTemp)
+    },
+    getTodayDetails: function () {
+      return this.rawWeatherData.daily.data[0]
     }
   }
 }
